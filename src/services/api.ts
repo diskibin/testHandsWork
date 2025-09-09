@@ -52,4 +52,4 @@ export const shiftsApi = createApi({
   }),
 });
 
-export const { useGetShiftsQuery } = shiftsApi;
+export const { useLazyGetShiftsQuery } = shiftsApi;

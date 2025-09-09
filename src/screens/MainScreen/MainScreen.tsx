@@ -1,11 +1,21 @@
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { UniversalProps } from "../../App.tsx";
-import React from "react";
-import { Shift, useGetShiftsQuery } from '../../services/api';
+import React, { useEffect } from "react";
+import { Shift, useLazyGetShiftsQuery } from '../../services/api';
 import { ShiftItem } from "../../components";
+import Geolocation from '@react-native-community/geolocation';
 
 export const MainScreen = ({ navigation }: UniversalProps) => {
-  const { data: shifts, error, isLoading, refetch } = useGetShiftsQuery({ latitude: 45.039268, longitude: 38.987221 });
+  const [triggerGetShifts, { data: shifts, error, isLoading }, refetch] = useLazyGetShiftsQuery();
+
+  useEffect(() => {
+    Geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        triggerGetShifts({ latitude, longitude })
+      },
+    );
+  }, [triggerGetShifts]);
 
   if (isLoading) {
     return (
@@ -33,10 +43,17 @@ export const MainScreen = ({ navigation }: UniversalProps) => {
         renderItem={({ item }: { item: Shift }) => (
           <ShiftItem item={item} onPress={() => { navigation.navigate('Shift', { shift: item }) }} />
         )}
+        ListEmptyComponent={EmptyListMessage}
       />
     </View>
   );
 }
+
+const EmptyListMessage = () => (
+  <View style={styles.center}>
+    <Text>Ничего не найдено</Text>
+  </View>
+);
 
 const styles = StyleSheet.create({
   container: {
@@ -49,5 +66,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#eee',
+    padding: 16,
   }
 });
