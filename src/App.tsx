@@ -3,6 +3,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { MainScreen, ShiftScreen } from "./screens";
 import { RouteProp } from "@react-navigation/core";
+import { Provider } from "react-redux";
+import { store } from "./redux/store.ts";
 
 export type RootStackParamList = {
   Main: undefined;
@@ -21,11 +23,13 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false, animation: 'fade' }} />
-        <Stack.Screen name="Shift" component={ShiftScreen} options={{ headerShown: false, animation: 'fade' }} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false, animation: 'fade' }} />
+          <Stack.Screen name="Shift" component={ShiftScreen} options={{ headerShown: false, animation: 'fade' }} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
   );
 }
