@@ -4,11 +4,12 @@ import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-na
 import { MainScreen, ShiftScreen } from "./screens";
 import { RouteProp } from "@react-navigation/core";
 import { Provider } from "react-redux";
-import { store } from "./redux/store.ts";
+import { store } from "./store/store.ts";
+import { Shift } from "./services/api.ts";
 
 export type RootStackParamList = {
   Main: undefined;
-  Shift: undefined;
+  Shift: { shift: Shift };
 };
 
 type UniversalScreenRouteProp = RouteProp<RootStackParamList>;
@@ -26,8 +27,8 @@ export default function App() {
     <Provider store={store}>
       <NavigationContainer>
         <Stack.Navigator>
-          <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false, animation: 'fade' }} />
-          <Stack.Screen name="Shift" component={ShiftScreen} options={{ headerShown: false, animation: 'fade' }} />
+          <Stack.Screen name="Main" component={ MainScreen } options={{ title: 'Список смен', headerTitleAlign: 'center', animation: 'fade' }} />
+          <Stack.Screen name="Shift" component={ ShiftScreen } options={{ title: 'Смена', headerTitleAlign: 'center', animation: 'fade' }} />
         </Stack.Navigator>
       </NavigationContainer>
     </Provider>

@@ -1,30 +1,37 @@
-import { FlatList, StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { UniversalProps } from "../../App.tsx";
 import React from "react";
 import { Shift, useGetShiftsQuery } from '../../services/api';
+import { ShiftItem } from "../../components";
 
 export const MainScreen = ({ navigation }: UniversalProps) => {
-  const { data: shifts, error, isLoading } = useGetShiftsQuery({ latitude: 45.039268, longitude: 38.987221 });
+  const { data: shifts, error, isLoading, refetch } = useGetShiftsQuery({ latitude: 45.039268, longitude: 38.987221 });
 
   if (isLoading) {
-    return <Text>Loading users...</Text>;
+    return (
+      <View style={styles.center}>
+        <Text>Загрузка смен...</Text>
+      </View>
+    );
   }
 
   if (error) {
-    return <Text>Error: {error.message}</Text>;
+    return (
+      <View style={styles.center}>
+        <Text>Ошибка</Text>
+      </View>
+    );
   }
 
   return (
     <View style={styles.container}>
       <FlatList
-        data={shifts.data}
+        data={shifts?.data}
         keyExtractor={(item) => item.id}
+        onRefresh={() => refetch}
+        refreshing={isLoading}
         renderItem={({ item }: { item: Shift }) => (
-          <TouchableOpacity style={styles.block} onPress={() => { navigation.navigate('Shift') }}>
-            <Text>Адрес: {item.address}</Text>
-            <Text>Дата начала: {item.dateStartByCity}</Text>
-            <Text>Время начала: {item.timeStartByCity}</Text>
-          </TouchableOpacity>
+          <ShiftItem item={item} onPress={() => { navigation.navigate('Shift', { shift: item }) }} />
         )}
       />
     </View>
@@ -35,9 +42,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#eee',
   },
-  block: {
-    borderWidth: 1,
+  center: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#eee',
   }
 });
